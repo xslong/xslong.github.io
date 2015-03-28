@@ -4,22 +4,28 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Xslong&#39;s Blog</title>
+    <title>Ejabberd 15.03 在RedHat安装过程 | Xslong&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Xslong">
     
 
     
-    <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Xslong's Blog">
-<meta property="og:url" content="http://xslong.github.io/index.html">
+    <meta name="description" content="环境：    Red Hat Enterprise Linux Server release 5.8 (Tikanga)    Erlang R16B03
+https://www.process-one.net/docs/ejabberd/guide_en.htmlhttps://www.ejabberd.im/node/24818
+上周Ejabberd 15.03版本发布，主要是会话管理底层增加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ejabberd 15.03 在RedHat安装过程">
+<meta property="og:url" content="http://xslong.github.io/2015/03/28/Ejabberd-15-03-在RedHat安装过程/index.html">
 <meta property="og:site_name" content="Xslong's Blog">
-<meta property="og:description">
+<meta property="og:description" content="环境：    Red Hat Enterprise Linux Server release 5.8 (Tikanga)    Erlang R16B03
+https://www.process-one.net/docs/ejabberd/guide_en.htmlhttps://www.ejabberd.im/node/24818
+上周Ejabberd 15.03版本发布，主要是会话管理底层增加">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Xslong's Blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="Ejabberd 15.03 在RedHat安装过程">
+<meta name="twitter:description" content="环境：    Red Hat Enterprise Linux Server release 5.8 (Tikanga)    Erlang R16B03
+https://www.process-one.net/docs/ejabberd/guide_en.htmlhttps://www.ejabberd.im/node/24818
+上周Ejabberd 15.03版本发布，主要是会话管理底层增加">
 
     
     <link rel="alternative" href="/atom.xml" title="Xslong&#39;s Blog" type="application/atom+xml">
@@ -68,12 +74,10 @@
 </div>
     </header>
     <div id="container">
-      <div id="main">
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
   <h1 itemprop="name">
     
       <a href="/2015/03/28/Ejabberd-15-03-在RedHat安装过程/" title="Ejabberd 15.03 在RedHat安装过程" itemprop="url">Ejabberd 15.03 在RedHat安装过程</a>
@@ -87,9 +91,16 @@
     
   </p>
 </header>
-    <div class="article-content">
-        
-        <p>环境：<br>    Red Hat Enterprise Linux Server release 5.8 (Tikanga)<br>    Erlang R16B03</p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>环境：<br>    Red Hat Enterprise Linux Server release 5.8 (Tikanga)<br>    Erlang R16B03</p>
 <p><a href="https://www.process-one.net/docs/ejabberd/guide_en.html" target="_blank" rel="external">https://www.process-one.net/docs/ejabberd/guide_en.html</a><br><a href="https://www.ejabberd.im/node/24818" target="_blank" rel="external">https://www.ejabberd.im/node/24818</a></p>
 <p>上周Ejabberd 15.03版本发布，主要是会话管理底层增加了redis的支持、可以在命令中完成增加模块、添加群集节点。如果ejabberd_auth、其它核心模块db_type也能够支持redis就好了，因为现在系统有用到redis，性能应该会有不少提升。</p>
 <p>先从官网把源代码下载下来（最好用git下载，反正一会也会安装）<br><a href="https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/15.03/ejabberd-15.03.tgz" target="_blank" rel="external">https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/15.03/ejabberd-15.03.tgz</a><br>下载后解压，进入执行autogen.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ./autogen.sh </span></span><br><span class="line">configure.ac:<span class="number">12</span>: error: possibly undefined macro: AC_PROG_SED</span><br><span class="line">If this token and others are legitimate, please use m4_pattern_allow.</span><br><span class="line">See the Autoconf documentation.</span><br><span class="line">configure.ac:<span class="number">32</span>: error: possibly undefined macro: AC_ERLANG_NEED_ERL</span><br><span class="line">configure.ac:<span class="number">33</span>: error: possibly undefined macro: AC_ERLANG_NEED_ERLC</span><br><span class="line">configure.ac:<span class="number">48</span>: error: possibly undefined macro: AC_ERLANG_SUBST_ROOT_DIR</span><br></pre></td></tr></table></figure></p>
@@ -107,14 +118,9 @@
 <p>启动ejabberd<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ejabberdctl live</span></span><br><span class="line"><span class="number">2015</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">11</span>:<span class="number">40</span>:<span class="number">15.044</span> [critical] &lt;<span class="number">0.140</span>.<span class="number">0</span>&gt;@ejabberd:<span class="built_in">exit</span>_or_halt:<span class="number">123</span> couldn<span class="string">'t find module /lib/ejabberd/ebin/configure.beam needed for application '</span>ejabberd<span class="string">'</span></span><br></pre></td></tr></table></figure></p>
 <p>/lib/ejabberd/ebin/configure.beam 找不到，从安装目录把ebin/configure.beam 复制到这个目录就行了。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># cp ebin/configure.beam /lib/ejabberd/ebin/</span></span><br><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ejabberdctl live</span></span><br></pre></td></tr></table></figure></p>
 <p>ok，ejabberd安装成功。安装的过程中修改过几次编译配置文件，不确定是我环境问题还是ejabberd打包的问题，我在mac上安装ejabberd 15.02也没有遇到这些多问题。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
+  
+	</div>
+		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
 
@@ -127,86 +133,43 @@
 
 
 
-
-<div class="comments-count">
+	<div class="article-share" id="share">
 	
-</div>
+	  <div data-url="http://xslong.github.io/2015/03/28/Ejabberd-15-03-在RedHat安装过程/" data-title="Ejabberd 15.03 在RedHat安装过程 | Xslong&#39;s Blog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
 
 </footer>
 
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/03/21/ejabberd-couldn-t-find-module-lib-ejabberd-ebin-configure-beam/" title="ejabberd-couldn&#39;t find module /lib/ejabberd/ebin/configure.beam" itemprop="url">ejabberd-couldn&#39;t find module /lib/ejabberd/ebin/configure.beam</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="http://xslong.github.io/about" title="Xslong" target="_blank" itemprop="author">Xslong</a>
-		
-  <p class="article-time">
-    <time datetime="2015-03-21T05:06:05.000Z" itemprop="datePublished"> 发表于 2015-03-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>启动Ejabberd时出现couldn’t find module /lib/ejabberd/ebin/configure.beam needed for application ‘ejabberd’</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh-<span class="number">3.2</span><span class="comment"># ejabberdctl live</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Crash dump was written to: //var/<span class="built_in">log</span>/ejabberd/erl_crash_20150321-<span class="number">102058</span>.dump</span><br><span class="line">couldn<span class="string">'t find module /lib/ejabberd/ebin/configure.beam needed for application '</span>ejabberd<span class="string">'</span></span><br></pre></td></tr></table></figure>
-<p>修改源码编译目录中的Makefile.in文件，找到rm -f $(BEAMDIR)/configure.beam 这一行，把这行前面加个# 注释掉，然后重新编译安装即可。</p>
-<p><a href="https://github.com/processone/ejabberd/issues/199" target="_blank" rel="external">https://github.com/processone/ejabberd/issues/199</a></p>
-<p><a href="https://support.process-one.net/browse/EJAB-1710" target="_blank" rel="external">https://support.process-one.net/browse/EJAB-1710</a></p>
-<p>方法二：</p>
-<p>直接从安装目录把configure.beam复制到/lib/ejabberd/ebin/<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ejabberdctl live</span></span><br><span class="line"><span class="number">2015</span>-<span class="number">03</span>-<span class="number">28</span> <span class="number">11</span>:<span class="number">40</span>:<span class="number">15.044</span> [critical] &lt;<span class="number">0.140</span>.<span class="number">0</span>&gt;@ejabberd:<span class="built_in">exit</span>_or_halt:<span class="number">123</span> couldn<span class="string">'t find module /lib/ejabberd/ebin/configure.beam needed for application '</span>ejabberd<span class="string">'</span><br><span class="line">[root@ydhl-jk2 ejabberd-15.03]# cp ebin/configure.beam /lib/ejabberd/ebin/</span><br><span class="line">[root@ydhl-jk2 ejabberd-15.03]# ejabberdctl live</span></span><br></pre></td></tr></table></figure></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Ejabberd/">Ejabberd</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
+   	       
+	</article>
 	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/03/21/ejabberd-couldn-t-find-module-lib-ejabberd-ebin-configure-beam/"  title="ejabberd-couldn&#39;t find module /lib/ejabberd/ebin/configure.beam">
+ <strong>下一篇：</strong><br/> 
+ <span>ejabberd-couldn&#39;t find module /lib/ejabberd/ebin/configure.beam
+</span>
+</a>
 </div>
 
-</footer>
+</nav>
 
+	
 
-    </article>
-
-
-
-
-
-
-
-</div>
+</div>  
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
 
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -306,6 +269,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
@@ -325,6 +290,62 @@ $(document).ready(function(){
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+    
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
 
 
 
@@ -333,6 +354,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 
@@ -364,4 +406,4 @@ $(document).ready(function(){
 <!-- Tiny_search End -->
 
   </body>
- </html>
+</html>
