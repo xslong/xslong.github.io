@@ -106,7 +106,7 @@ https://www.process-one.net/docs/ejabberd/guide_en.htmlhttps://www.ejabberd.im/n
 <p>先从官网把源代码下载下来（最好用git下载，反正一会也会安装）<br><a href="https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/15.03/ejabberd-15.03.tgz" target="_blank" rel="external">https://www.process-one.net/downloads/downloads-action.php?file=/ejabberd/15.03/ejabberd-15.03.tgz</a><br>下载后解压，进入执行autogen.sh<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ./autogen.sh </span></span><br><span class="line">configure.ac:<span class="number">12</span>: error: possibly undefined macro: AC_PROG_SED</span><br><span class="line">If this token and others are legitimate, please use m4_pattern_allow.</span><br><span class="line">See the Autoconf documentation.</span><br><span class="line">configure.ac:<span class="number">32</span>: error: possibly undefined macro: AC_ERLANG_NEED_ERL</span><br><span class="line">configure.ac:<span class="number">33</span>: error: possibly undefined macro: AC_ERLANG_NEED_ERLC</span><br><span class="line">configure.ac:<span class="number">48</span>: error: possibly undefined macro: AC_ERLANG_SUBST_ROOT_DIR</span><br></pre></td></tr></table></figure></p>
 <p>这几个提示宏没有定义的错误提示比较纠结，直接编辑当前目录的configure.ac，找到错误的行注释掉。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># vi configure.ac</span></span><br></pre></td></tr></table></figure></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ./configure</span></span><br><span class="line">checking whether make sets $(MAKE)... yes</span><br><span class="line">checking <span class="keyword">for</span> a BSD-compatible install... /usr/bin/install -c</span><br><span class="line">checking <span class="keyword">for</span> erl... /usr/<span class="built_in">local</span>/erlang/bin/erl</span><br><span class="line">checking <span class="keyword">for</span> erlc... /usr/<span class="built_in">local</span>/erlang/bin/erlc</span><br><span class="line">checking Erlang/OTP version... ok</span><br><span class="line">checking <span class="keyword">for</span> escript... no</span><br><span class="line">checking <span class="keyword">for</span> make... make</span><br><span class="line">configure: error: <span class="string">'escript'</span> was not found</span><br></pre></td></tr></table></figure>
-<p>提示’escript’ was not found，不可能呀我明明安装了erlang，直接执行script命令也是可以的。怀疑是Make配置有问题，打开当前目录的configure.ac，找到了下面的几行：</p>
+<p>提示’escript’ was not found，不可能呀我明明安装了erlang，直接执行escript命令也是可以的。怀疑是Make配置有问题，打开当前目录的configure.ac，找到了下面的几行：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">51</span> <span class="comment">#locating escript</span></span><br><span class="line"><span class="number">52</span> AC_PATH_PROG([ESCRIPT], [escript], [], [<span class="variable">$ERLANG_ROOT_DIR</span>/bin])</span><br><span class="line"><span class="number">53</span></span><br><span class="line"><span class="number">54</span> <span class="comment">#locating make 55 AC_CHECK_PROG([MAKE], [make], [make], [])</span></span><br><span class="line"><span class="number">56</span></span><br><span class="line"><span class="number">57</span> <span class="keyword">if</span> <span class="built_in">test</span> <span class="string">"x<span class="variable">$ESCRIPT</span>"</span> = <span class="string">"x"</span>; <span class="keyword">then</span></span><br><span class="line"><span class="number">58</span> AC_MSG_ERROR([<span class="string">'escript'</span> was not found])</span><br><span class="line"><span class="number">59</span> <span class="keyword">fi</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
 <p>原来使用的是$ERLANG_ROOT_DIR环境变量下面的escript，在/etc/profile的配置上erlang的环境变量：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># vi /etc/profile +</span></span><br><span class="line"><span class="built_in">export</span> ERL_HOME=/usr/<span class="built_in">local</span>/erlang</span><br><span class="line"><span class="built_in">export</span> ERLANG_ROOT_DIR=<span class="variable">$ERL_HOME</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$ERL_HOME</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure></p>
 <p>继续<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># ./configure</span></span><br><span class="line">checking whether make sets $(MAKE)... yes</span><br><span class="line">checking <span class="keyword">for</span> a BSD-compatible install... /usr/bin/install -c</span><br><span class="line">checking <span class="keyword">for</span> erl... /usr/<span class="built_in">local</span>/erlang/bin/erl</span><br><span class="line">checking <span class="keyword">for</span> erlc... /usr/<span class="built_in">local</span>/erlang/bin/erlc</span><br><span class="line">checking Erlang/OTP version... ok</span><br><span class="line">checking <span class="keyword">for</span> escript... /usr/<span class="built_in">local</span>/erlang/bin/escript</span><br><span class="line">checking <span class="keyword">for</span> make... make</span><br><span class="line">checking whether Erlang is using deprecated types... yes</span><br><span class="line">configure: creating ./config.status</span><br><span class="line">config.status: creating Makefile</span><br><span class="line">config.status: creating vars.config</span><br><span class="line">config.status: creating src/ejabberd.app.src</span><br><span class="line">[root@ydhl-jk2 ejabberd-<span class="number">15.03</span>]<span class="comment"># make</span></span><br><span class="line">rm -rf deps/.got</span><br><span class="line">rm -rf deps/.built</span><br><span class="line">/usr/<span class="built_in">local</span>/erlang/bin/escript rebar get-deps &amp;&amp; :&gt; deps/.got</span><br><span class="line">==&gt; rel (get-deps)</span><br><span class="line">==&gt; ejabberd-<span class="number">15.03</span> (get-deps)</span><br><span class="line">Pulling p1_cache_tab from &#123;git,<span class="string">"git://github.com/processone/cache_tab"</span>&#125;</span><br><span class="line">ERROR: Rebar requires version &#123;<span class="number">1</span>,<span class="number">5</span>&#125; or higher of git to process &#123;git,</span><br><span class="line"><span class="string">"git://github.com/processone/cache_tab"</span>&#125;</span><br><span class="line">ERROR: <span class="string">'get-deps'</span> failed <span class="keyword">while</span> processing /data/src/ejabberd-<span class="number">15.03</span>: rebar_abort</span><br><span class="line">make: *** [deps/.got] 错误 <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
@@ -216,7 +216,7 @@ https://www.process-one.net/docs/ejabberd/guide_en.htmlhttps://www.ejabberd.im/n
 	
 	
 	<section class="info">
-		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+		<p> Hello ,I&#39;m Xslong. <br/>
 			This is my blog,believe it or not.</p>
 	</section>
 	 
@@ -380,26 +380,22 @@ $(document).ready(function(){
 
 <!-- Analytics Begin -->
 
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?18a9e24ed15dd65fb961652a6b80841c";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-68406640-1', 'auto');
-  ga('send', 'pageview');
-
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68406640-1', 'null');  
+ga('send', 'pageview');
 </script>
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F18a9e24ed15dd65fb961652a6b80841c' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
 
 
 <!-- Analytics End -->
